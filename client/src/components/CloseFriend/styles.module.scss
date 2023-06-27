@@ -1,0 +1,24 @@
+.friend {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  &:hover{
+    background-color: #ebe7e7;
+  }
+
+  padding: 8px;
+
+  // & + .friend{
+  //   margin-top: 15px;
+  // }
+
+  .accountImg {
+    width:var(--account-img-wh);
+    height:var(--account-img-wh);
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+}
+
+

@@ -1,0 +1,32 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+
+  font-size: 1.6rem;
+
+  .sideBar {
+    flex: 2.5;
+  }
+
+  .content {
+    flex: 9;
+    margin-left: 32px;
+    
+    .profileCover {
+      height: var(--profile-cover-height);
+    }
+
+    .profileInfo {
+      display: flex;
+
+      .feed {
+        flex: 5;
+        margin: 24px 132px;
+      }
+
+      .rightBar {
+        flex: 3;
+      }
+    }
+  }
+}

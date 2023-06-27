@@ -1,0 +1,60 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  color: white;
+
+  .link {
+    margin-right: 10px;
+    font-size: 1.4rem;
+    cursor: pointer;
+  }
+
+  .icons {
+    display: flex;
+
+    .icon {
+      cursor: pointer;
+      position: relative;
+
+      & + .icon {
+        margin-left: 15px;
+      }
+
+      & svg {
+        font-size: 2.4rem;
+      }
+
+      .notiCount {
+        width: 12px;
+        height: 12px;
+        background-color: red;
+        border-radius: 50%;
+        color: white;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .accountImg {
+    width: var(--account-img-wh);
+    height: var(--account-img-wh);
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+  }
+}
+
+div .logOutIcon {
+  &:hover{
+    cursor: pointer;
+  }
+  margin-left: 16px;
+  font-size: 2.4rem;
+}

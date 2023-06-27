@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+html {
+  font-size: 62.5%
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* *{
+  outline: red dashed 1px;
+} */
+
+input:focus{
+  outline: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+:root{
+  --topBar-height: 50px;
+  --account-img-wh: 32px;
+  --share-h: 156px;
+
+  --primary-color: #1877f2 ;
+
+  --profile-cover-height: 320px
+}

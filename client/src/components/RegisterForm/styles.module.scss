@@ -1,0 +1,47 @@
+.registerBox {
+  //   height: 300px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  & > * {
+    margin: 8px 0;
+  }
+
+  input {
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    font-size: 18px;
+    padding-left: 20px;
+  }
+
+  a,
+  button {
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .signupButton {
+    background-color: #1775ee;
+  }
+
+  .loginButton {
+    width: 60%;
+    align-self: center;
+
+    background-color: #42b72a;
+  }
+}

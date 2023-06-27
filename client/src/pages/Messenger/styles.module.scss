@@ -1,0 +1,88 @@
+.messenger {
+  height: calc(100vh - var(--topBar-height));
+  display: flex;
+
+  .chatMenu {
+    flex: 1;
+
+    &::-webkit-scrollbar {
+      width: 1px;
+      background-color: rgb(179, 179, 179);
+    }
+
+    overflow-y: scroll;
+    .chatMenuWrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .chatMenuInput {
+        width: 100%;
+        padding: 10px 0;
+        border: none;
+        border-bottom: 1px solid gray;
+        margin-bottom: 16px;
+
+        & svg {
+          display: none;
+        }
+
+        & div[class*="dropDownWrapper"]{
+          color: white;
+          // background-color: var( --primary-color);
+          // background-color: rgb(228,230,235);
+          border: 1px solid black;
+          margin-top: 4px;
+        }
+      }
+      .chatMenuUser {
+        width: 100%;
+        font-size: 1.5rem;
+      }
+    }
+  }
+  .chatBox {
+    flex: 4;
+    .chatBoxWrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .noConversationText {
+      flex: 1;
+      display: flex;
+      align-items: center;
+
+      justify-items: center;
+      align-self: center;
+      font-size: 50px;
+      color: rgb(224, 220, 220);
+      cursor: default;
+    }
+  }
+}
+
+.chatMenuWrapper,
+.chatBoxWrapper {
+  padding: 10px;
+  height: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .chatMenu {
+    flex: 1;
+  }
+
+  .chatMenuInput {
+    display: none;
+  }
+
+  .chatBox {
+    flex: 10;
+  }
+
+  .chatOnline {
+    flex: 1px;
+  }
+}

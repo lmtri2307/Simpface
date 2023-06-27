@@ -1,0 +1,33 @@
+.wrapper {
+  height: var(--topBar-height);
+  width: 100%;
+  background-color: #1877f2;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  .logo {
+    flex: 3;
+    font-size: 24px;
+    margin-left: 20px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+  }
+
+  .search {
+    position: relative;
+    flex: 5;
+    // & > div {
+    //   width: 100%;
+    // }
+  }
+
+  .nav {
+    flex: 4;
+  }
+}
+
+

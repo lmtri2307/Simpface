@@ -1,0 +1,19 @@
+.content {
+  display: flex;
+  width: 100%;
+
+  font-size: 1.6rem;
+
+  .sideBar {
+    flex: 2.5;
+  }
+
+  .feed {
+    flex: 5;
+    margin: 24px 132px;
+  }
+
+  .rightBar {
+    flex: 3;
+  }
+}
