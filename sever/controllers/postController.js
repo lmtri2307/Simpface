@@ -1,6 +1,5 @@
 const Post = require('../models/Post')
 const User = require('../models/User')
-const tokenHandler = require('../utils/tokenHandler')
 
 
 exports.upload = async (req, res) => {
@@ -14,7 +13,7 @@ exports.upload = async (req, res) => {
 
 exports.createPost = async (req, res) => {
     try {
-        const username = tokenHandler.getPayload(req.cookies.jwt).username
+        const username = req.user.username
         const user = await User.findOne({
             username: username
         }).exec()
@@ -23,7 +22,7 @@ exports.createPost = async (req, res) => {
             ...req.body
         }).then((result) => {
             res.status(200).json({
-                ...result._doc,
+                ...result.toObject(),
                 user: {
                     username: user.username,
                     profilePicture: user.profilePicture
@@ -39,22 +38,15 @@ exports.createPost = async (req, res) => {
 exports.likePost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.postId).exec()
-        const username = tokenHandler.getPayload(req.cookies.jwt).username
-        console.log("username: ", username)
-        const user = await User.findOne({
-            username: username
-        }).exec()
-        console.log(user._id)
-        console.log(post.likes)
-        console.log("Liked: ", post.likes.includes(user._id))
-        if (!post.likes.includes(user._id)) {
-            await Post.updateOne({ _id: post._id }, { $push: { likes: user._id } })
+        const userId = req.user._id
+        console.log("Liked: ", post.likes.includes(userId))
+        if (!post.likes.includes(userId)) {
+            await Post.updateOne({ _id: post._id }, { $push: { likes: userId } })
             res.status(200).send("Liked Post")
         } else {
-            await Post.updateOne({ _id: post._id }, { $pull: { likes: user._id } })
+            await Post.updateOne({ _id: post._id }, { $pull: { likes: userId } })
             res.status(200).send("Disliked Post")
         }
-        console.log(post.likes)
     } catch (error) {
         console.log(error)
         res.status(500).json(error)
@@ -68,7 +60,7 @@ exports.findPosts = async (req, res) => {
         const postwithInfo = await Promise.all(
             post.map(item => {
                 return {
-                    ...item._doc,
+                    ...item.toObject(),
                     user: {
                         username: user.username,
                         profilePicture: user.profilePicture
@@ -88,7 +80,7 @@ exports.findPosts = async (req, res) => {
 
 exports.timeline = async (req, res) => {
     try {
-        const username = tokenHandler.getPayload(req.cookies.jwt).username
+        const username = req.user.username
         const user = await User.findOne({
             username: username
         }).exec()
@@ -103,7 +95,7 @@ exports.timeline = async (req, res) => {
                 const user = await User.findOne({ _id: item.userId }).exec()
                 console.log(user)
                 return {
-                    ...item._doc,
+                    ...item.toObject(),
                     user: {
                         username: user.username,
                         profilePicture: user.profilePicture
@@ -113,6 +105,7 @@ exports.timeline = async (req, res) => {
         postsWithUser.sort((post1, post2) => {
             return new Date(post2.createdAt) - new Date(post1.createdAt);
         })
+        console.log("postsWithUser: ", postsWithUser)
         res.status(200).json(postsWithUser)
     } catch (error) {
         console.log(error)
@@ -122,22 +115,19 @@ exports.timeline = async (req, res) => {
 
 exports.comment = async (req, res) => {
     try {
-        const username = tokenHandler.getPayload(req.cookies.jwt).username
-        const user = await User.findOne({
-            username: username
-        }).exec()
+        const userId = req.user._id
         await Post.updateOne(
             { _id: req.params.postId },
             {
                 $push: {
                     comments: {
-                        userId: user._id,
+                        userId: userId,
                         comment: req.body.comment
                     }
                 }
             })
         res.status(200).json({
-            userId: user._id,
+            userId: userId,
             comment: req.body.comment
         })
     } catch (error) {

@@ -2,7 +2,7 @@ import { memo, useRef, useState } from "react";
 import { useAuthContext } from "../../context/authContext";
 import styles from "./styles.module.scss";
 import { PermMedia, Label, Room, EmojiEmotions, Cancel, } from "@mui/icons-material"
-import axiosInstance from "../../api/axios";
+import api from "../../api";
 
 function Share({ addPost }) {
     const { user } = useAuthContext()
@@ -13,27 +13,16 @@ function Share({ addPost }) {
     const handlePost = async (e) => {
         try {
             e.preventDefault()
-            if(!file && !statusInput.current.value)
-            {
+            if (!file && !statusInput.current.value) {
                 alert("Nothing to post")
                 return
             }
-            let imgPath
-            //Upload image
-            if(file){
-                const data = new FormData()
-                data.append("avatar", file)
-                imgPath = (await axiosInstance.post(`${process.env.REACT_APP_BACK_END}post/upload`, data)).data.filePath
-            }
-            // Upload post
-            await axiosInstance.post(`${process.env.REACT_APP_BACK_END}post/create`, {
-                desc: statusInput.current.value,
-                photo: imgPath
-            }).then((res) => {
-                statusInput.current.value = ""
-                setFile(null)
-                addPost(res.data)
-            })
+            await api.post.createPost(file, statusInput.current.value)
+                .then((res) => {
+                    statusInput.current.value = ""
+                    setFile(null)
+                    addPost(res)
+                })
         } catch (error) {
             alert("Upload fail")
         }
@@ -46,7 +35,7 @@ function Share({ addPost }) {
                     alt="" />
                 <input
                     ref={statusInput}
-                    placeholder={`What's in your mind ${user.username}?`}
+                    placeholder={`What's in your mind ${user.username} ?`}
                     className={styles.statusText}
                 />
             </div>

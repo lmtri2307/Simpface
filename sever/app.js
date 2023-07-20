@@ -7,7 +7,10 @@ var helmet = require('helmet')
 var dotenv = require('dotenv')
 var cors = require('cors');
 var tokenHandler = require('./utils/tokenHandler')
+var connectDB = require("./database")
+
 dotenv.config()
+connectDB()
 
 
 
@@ -32,41 +35,19 @@ app.use(helmet())
 app.use(cors({ origin: true, credentials: true }));
 
 // Routing
+var router = require('./routes')
 
-var usersRouter = require('./routes/users');
-var authRouter = require('./routes/auth')
-var postRouter = require('./routes/posts')
-var convRouter = require('./routes/conversation')
-var messRouter = require('./routes/message');
-var userInfoRouter = require('./routes/userInfo')
-const { addOnlineUser } = require('./socket/socket');
 
 // verify token
 
-app.use('/auth', authRouter)
-app.use(function(req, res, next){
-  const token = req.cookies.jwt
-  if(!token){
-    res.status(403).send("Token is missing")
-    return
-  }
+app.use('/auth', router.authRouter)
+app.use(tokenHandler.verifyUser)
 
-  try {
-    const userId = tokenHandler.verify(token)._id
-    addOnlineUser(userId)
-  } catch (error) {
-    console.log(error)
-    res.status(403).json(error)
-    return
-  }
-  next()
-})
-
-app.use('/users', usersRouter);
-app.use('/post', postRouter)
-app.use('/conversation', convRouter)
-app.use('/message', messRouter)
-app.use('/userinfo', userInfoRouter)
+app.use('/users', router.userRouter);
+app.use('/post', router.postRouter)
+app.use('/conversation', router.conversationRouter)
+app.use('/message', router.messageRouter)
+app.use('/userinfo', router.userInfoRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

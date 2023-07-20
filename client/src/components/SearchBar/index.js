@@ -3,8 +3,7 @@ import SearchResult from "./SearchResult";
 import styles from "./styles.module.scss"
 
 import SearchIcon from '@mui/icons-material/Search';
-import axios from "axios";
-import axiosInstance from "../../api/axios";
+import api from "../../api";
 function SearchBar({ onResultClick }) {
     const [results, setResults] = useState([])
     const [isShowned, setIsShowned] = useState(false)
@@ -23,7 +22,7 @@ function SearchBar({ onResultClick }) {
     }, []);
     const handleSearch = async (e) => {
         if (e.target.value) {
-            const users = (await axiosInstance.get(`${process.env.REACT_APP_BACK_END}users/${e.target.value}/find`)).data
+            const users = await api.user.searchUsers(e.target.value)
             setResults(users)
             setIsShowned(true)
         } else {

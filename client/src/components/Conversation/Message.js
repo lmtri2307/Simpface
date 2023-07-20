@@ -6,7 +6,6 @@ import { format } from "timeago.js";
 
 // export default function Message({ message, own }) {
 function Message({ message, sender }) {
-  console.log("message render")
   const { user } = useAuthContext()
 
   const own = user._id === message.sender

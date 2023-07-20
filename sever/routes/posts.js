@@ -13,30 +13,17 @@ const storage = multer.diskStorage({
 });
 var upload = multer({ storage });
 
-router.post('/upload', upload.single("avatar"), function (req, res, next) {
-    postController.upload(req, res)
+router.post('/upload', upload.single("avatar"), postController.upload)
 
-})
+router.post('/create', postController.createPost)
 
-router.post('/create', function (req, res, next) {
-    postController.createPost(req, res)
-})
+router.put('/:postId/like', postController.likePost)
 
-router.put('/:postId/like', function (req, res, next) {
-    postController.likePost(req, res)
-})
+router.get('/:userName', postController.findPosts)
 
-router.get('/:userName', function (req, res, next) {
-    postController.findPosts(req, res)
-})
+router.get('/timeline/all', postController.timeline)
 
-router.get('/timeline/all', function (req, res, next) {
-    postController.timeline(req, res)
-})
-
-router.put('/:postId/comment', function (req, res, next) {
-    postController.comment(req, res)
-})
+router.put('/:postId/comment', postController.comment)
 
 
 module.exports = router;

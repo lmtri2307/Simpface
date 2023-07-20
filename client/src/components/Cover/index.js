@@ -2,8 +2,7 @@ import { memo} from "react";
 import styles from "./styles.module.scss"
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { useAuthContext } from "../../context/authContext";
-import axiosInstance from "../../api/axios";
-
+import api from "../../api"
 
 function Cover({ profile, cover, editable }) {
     const { user, updateProfile, updateCover } = useAuthContext()
@@ -11,18 +10,17 @@ function Cover({ profile, cover, editable }) {
     // const avatarRef = useRef()
     const handlePictureChange = async (e) => {
         const nameOfImg = e.target.getAttribute('name')
-        const data = new FormData()
-        data.append("picture", e.target.files[0])
-        axiosInstance.put(`users/${user._id}/change${nameOfImg}`,
-            data)
+        const pictureFile = e.target.files[0]
+
+        api.user.changePicture(user._id, nameOfImg, pictureFile)
             .then(res => {
                 // const newSrc = `${process.env.REACT_APP_BACK_END}${res.data}`
                 if (nameOfImg === "Cover") {
                     // coverRef.current.src = newSrc
-                    updateCover(res.data)
+                    updateCover(res)
                 } else {
                     // avatarRef.current.src = newSrc
-                    updateProfile(res.data)
+                    updateProfile(res)
                 }
             })
     }

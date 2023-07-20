@@ -3,8 +3,6 @@ var router = express.Router();
 const userInfoController = require('../controllers/userInfoController')
 
 
-router.put('/:username',  (req, res, next) => {
-    userInfoController.updateUserInfo(req, res)
-})
+router.put('/:username',  userInfoController.updateUserInfo)
 
 module.exports = router;

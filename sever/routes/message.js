@@ -4,14 +4,10 @@ const messageController = require("../controllers/messageController")
 
 
 //add
-router.post("/",  (req, res, next) => {
-  messageController.addNewMess(req, res)
-});
+router.post("/",  messageController.addNewMess);
 
 //get
 
-router.get("/:conversationId", (req, res, next) => {
-  messageController.getAllMessOfConv(req, res)
-});
+router.get("/:conversationId", messageController.getAllMessOfConv);
 
 module.exports = router;

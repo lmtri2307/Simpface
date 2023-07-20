@@ -1,23 +1,16 @@
 var express = require('express');
 var router = express.Router();
 const authController = require('../controllers/authController');
+const { verifyUser } = require('../utils/tokenHandler');
 
 
 /* GET auth listing. */
-router.post('/register', function(req, res, next) {
-  authController.register(req, res)
-});
+router.post('/register',  authController.register);
 
-router.post('/login', function(req,res){
-  authController.login(req,res)
-})
+router.post('/login', authController.login)
 
-router.get('/', function(req, res, next){
-  authController.checkAuth(req,res)
-})
+router.get('/', authController.checkAuth)
 
-router.get('/logout', function(req, res, next){
-  authController.logout(req, res)
-})
+router.get('/logout', verifyUser, authController.logout)
 
 module.exports = router;

@@ -5,27 +5,22 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import CheckIcon from '@mui/icons-material/Check';
 import { useAuthContext } from "../../context/authContext";
 import clsx from "clsx";
-import axiosInstance from "../../api/axios";
+import api from "../../api";
 
 function Info({ username }) {
     const { user } = useAuthContext()
     const [userInfo, setUserInfo] = useState({})
     const [isEditting, setIsEditting] = useState(false)
     useEffect(() => {
-        axiosInstance.get(`${process.env.REACT_APP_BACK_END}users/${username}/info`)
-            .then(res => setUserInfo(res.data))
+        api.user.getUserInfo(username)
+            .then(res => setUserInfo(res))
     }, [username])
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const formData = new FormData(e.target);
-        const info = {};
-        for (let [key, value] of formData.entries()) {
-            info[key] = value;
-        }
-        axiosInstance.put(`${process.env.REACT_APP_BACK_END}userinfo/${username}`, { info })
+        api.user.updateInfo(username, e.target)
             .then(res => {
-                setUserInfo(res.data)
+                setUserInfo(res)
                 setIsEditting(false)
             })
     }

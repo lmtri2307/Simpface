@@ -13,7 +13,7 @@ function Home() {
                     <Sidebar></Sidebar>
                 </div>
                 <div className={styles.feed}>
-                    <Feed></Feed>
+                    <Feed ></Feed>
                 </div>
                 <div className={styles.rightBar}>
                     <Contacts></Contacts>

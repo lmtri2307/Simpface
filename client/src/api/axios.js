@@ -6,18 +6,21 @@ const axiosInstance = axios.create({
     withCredentials: true
 });
 
-export const setUpHandleTokenError = (onError) => {
+export const setUpHandleTokenError = (onTokenError) => {
     axiosInstance.interceptors.response.use(
         (res) => {
-            return res
+            if (res.hasOwnProperty("data")) {
+                return res.data;
+            }
+            return res;
         }, (err) => {
-            if(err.response && err.response.status === 403){
-                onError()
+            console.log("axios err:", err)
+            if (err.response && err.response.status === 403) {
+                onTokenError()
             }
             return Promise.reject(err)
         }
     )
 }
-
 
 export default axiosInstance

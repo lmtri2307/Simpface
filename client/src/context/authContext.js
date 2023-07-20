@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import axiosInstance, { setUpHandleTokenError } from '../api/axios';
+import { setUpHandleTokenError } from '../api/axios';
+import api from "../api"
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -7,26 +8,20 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    axiosInstance.get(`${process.env.REACT_APP_BACK_END}auth`)
+    api.auth.getUserContext()
       .then((res) => {
-        setUser(res.data)
+        setUser(res)
       }).finally(() => setfetchedUser(true))
   }, [])
 
 
   const login = async (email, password) => {
-    const response = await axiosInstance.post(`${process.env.REACT_APP_BACK_END}auth/login`,
-      {
-        email,
-        password
-      }
-    )
-    setUser(response.data)
-    console.log(response.data)
+    const response = await api.auth.login(email, password)
+    setUser(response)
   };
 
   const logout = () => {
-    axiosInstance.get(`${process.env.REACT_APP_BACK_END}auth/logout`).catch(err => console.log(err))
+    api.auth.logout().catch(err => console.log(err))
     setUser(null);
   };
 

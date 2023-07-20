@@ -8,12 +8,11 @@ exports.findUser = async (req, res) => {
         let user
         try {
             user = await User.findOne({
-                _id : req.params.usernameOrId
+                _id: req.params.usernameOrId
             }).exec()
         } catch (error) {
-            if( error instanceof CastError )
-            {
-                user = await User.findOne({username: req.params.usernameOrId}).exec()
+            if (error instanceof CastError) {
+                user = await User.findOne({ username: req.params.usernameOrId }).exec()
             } else {
                 throw error
             }
@@ -21,7 +20,7 @@ exports.findUser = async (req, res) => {
         if (!user) {
             throw new Error("Can't find user")
         }
-        res.status(200).json(user._doc)
+        res.status(200).json(user.toObject())
     } catch (error) {
         res.status(500).json(error)
         console.log(error)
@@ -31,7 +30,7 @@ exports.findUser = async (req, res) => {
 exports.findFriend = async (req, res) => {
     try {
         const friend = await User.findOne({ _id: req.params.userId }, "profilePicture username").exec()
-        res.status(200).json(friend._doc)
+        res.status(200).json(friend.toObject())
     } catch (error) {
         console.log(error)
         res.status(500).json(error)
@@ -40,7 +39,7 @@ exports.findFriend = async (req, res) => {
 
 exports.isFollow = async (req, res) => {
     try {
-        const username = tokenHandler.getPayload(req.cookies.jwt).username
+        const username = req.user.username
         const [followUser, currentUser] = await Promise.all([
             User.findOne({ username: req.params.username }).exec(),
             User.findOne({ username: username }).exec()
@@ -81,7 +80,7 @@ exports.findCover = async (req, res) => {
 
 exports.followUser = async (req, res) => {
     try {
-        const username = tokenHandler.getPayload(req.cookies.jwt).username
+        const username = req.user.username
         const [currentUser, followUser] = await Promise.all([
             User.findOne({ username: username }).exec(),
             User.findOne({ username: req.params.username }).exec()
@@ -103,7 +102,7 @@ exports.followUser = async (req, res) => {
 
 exports.unFollowUser = async (req, res) => {
     try {
-        const username = tokenHandler.getPayload(req.cookies.jwt).username
+        const username = req.user.username
 
         const [currentUser, followUser] = await Promise.all([
             User.findOne({ username: username }).exec(),
@@ -141,12 +140,46 @@ exports.findUserInfo = async (req, res) => {
     try {
         const user = await User.findOne({ username: req.params.username }, "userInfo followings").exec()
         const info = await UserInfo.findById(user.userInfo).exec()
-        const toClientKeys = Object.keys(info._doc).filter(key => !["_id", "__v"].includes(key))
+        const toClientKeys = Object.keys(info.toObject()).filter(key => !["_id", "__v"].includes(key))
         const toClient = toClientKeys.reduce((acc, key) => {
-            acc[key] = info._doc[key];
+            acc[key] = info.toObject()[key];
             return acc;
         }, {});
         res.status(200).json(toClient)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+exports.updateCover = async (req, res) => {
+    try {
+        User.updateOne(
+            { _id: req.params.userId },
+            {
+                $set: {
+                    coverPicture: `assets/person/${req.file.filename}`
+                }
+            }
+        ).exec()
+            .then(() => res.status(200).send(`assets/person/${req.file.filename}`))
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+exports.updateAvatar = async (req, res) => {
+    try {
+        User.updateOne(
+            { _id: req.params.userId },
+            {
+                $set: {
+                    profilePicture: `assets/person/${req.file.filename}`
+                }
+            }
+        ).exec()
+            .then(() => res.status(200).send(`assets/person/${req.file.filename}`))
     } catch (error) {
         console.log(error)
         res.status(500).json(error)

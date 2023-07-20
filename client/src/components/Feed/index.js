@@ -1,28 +1,33 @@
 import Post from "../Post";
 import Share from "../Share";
-import {  useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "../../context/authContext";
-import axiosInstance from "../../api/axios";
+import api from "../../api"
 
 function Feed({ username }) {
     const { user } = useAuthContext()
     const [posts, setPosts] = useState([])
     useEffect(() => {
         (async () => {
-            setPosts(username
-                ? (await axiosInstance.get(`post/${username}`)).data
-                : (await axiosInstance.get(`post/timeline/all`)).data)
+            const newPosts = username
+                ? await api.post.getPostOfUser(username)
+                : await api.post.getTimelinePost()
+
+            console.log("newPosts:", newPosts)
+            if (newPosts) {
+                setPosts(newPosts)
+            }
         })()
-    }, [username,user])
+    }, [username, user])
 
     const handleShare = useCallback((newPost) => {
-        console.log("new Post:", newPost)
         setPosts([newPost, ...posts])
     }, [posts])
+    const isCurrnetUser = !username || (user && user.username === username)
     return (<div>
-        {(user && username === user.username) && <Share addPost={handleShare} />}
+        {isCurrnetUser && <Share addPost={handleShare} />}
         {posts.map((item) =>
-                <Post key={item._id} post={item}></Post>
+            <Post key={item._id} post={item}></Post>
         )}
     </div>);
 }

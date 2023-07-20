@@ -4,23 +4,25 @@ const bcrypt = require('bcrypt');
 const tokenHandler = require('../utils/tokenHandler')
 const saltRounds = 10;
 const { removeOnlineUser } = require('../socket/socket');
-const { getPayload } = require('../utils/tokenHandler');
+
 
 
 exports.register = async (req, res) => {
     try {
-        User.create({
+        await User.create({
             username: req.body.username,
             email: req.body.email,
             password: await bcrypt.hash(req.body.password, saltRounds),
             userInfo: (await UserInfo.create({}))._id
-        }).then(user => {
-            res.send("Register succeed")
-        }).catch(err => {
-            console.log(err)
-            res.send("Register failed")
         })
+        res.status(200).send("Register succeed")
     } catch (error) {
+        if (error.name === "MongoServerError" && [11000, 11001].includes(error.code)) {
+            const violatedField = Object.keys(error.keyPattern)[0];
+            error = {
+                message : `${violatedField} is already used by someone`
+            }
+        }
         console.log(error)
         res.status(500).json(error)
     }
@@ -77,8 +79,7 @@ exports.logout = async (req, res) => {
     try {
         res.clearCookie("jwt")
         res.status(200).send("Logout succeed")
-        const userId = getPayload(req.cookies.jwt)._id
-        removeOnlineUser(userId)
+        removeOnlineUser(req.user._id)
     } catch (error) {
         console.log(error)
         res.status(500).json(error)

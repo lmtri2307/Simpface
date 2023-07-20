@@ -1,11 +1,11 @@
-import { Remove, Add} from "@mui/icons-material";
+import { Remove, Add } from "@mui/icons-material";
 import { useAuthContext } from "../../context/authContext";
 import UserFriendsList from './UserFriendsList'
 import styles from "./styles.module.scss"
 import Info from "./Info";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axios";
+import api from "../../api";
 
 function ProfileInfo({ username }) {
     const [isFollowed, setIsFollowed] = useState(false)
@@ -13,12 +13,15 @@ function ProfileInfo({ username }) {
     const { user, setUser } = useAuthContext()
     const navigate = useNavigate()
     useEffect(() => {
-        axiosInstance.get(`${process.env.REACT_APP_BACK_END}users/${username}/isFollowed`)
-            .then(res => setIsFollowed(res.data))
-
-        axiosInstance.get(`${process.env.REACT_APP_BACK_END}users/${username}/followings`)
+        api.user.checkFollowedUser(username)
             .then(res => {
-                setFollowings(res.data)
+                console.log("checkFollowedUser response:", res)
+                setIsFollowed(res)
+            })
+
+        api.user.getFollowingsOfUser(username)
+            .then(res => {
+                setFollowings(res)
             })
     }, [username])
 
@@ -29,13 +32,13 @@ function ProfileInfo({ username }) {
             return
         }
         if (isFollowed) {
-            axiosInstance.put(`${process.env.REACT_APP_BACK_END}users/${username}/unfollow`)
+            api.user.unfollowUser(username)
                 .then(res => setIsFollowed(prev => !prev))
         } else {
-            axiosInstance.put(`${process.env.REACT_APP_BACK_END}users/${username}/follow`)
+            api.user.followUser(username)
                 .then(res => {
                     setIsFollowed(prev => !prev)
-                    const newFollowings = [...user.followings, res.data]
+                    const newFollowings = [...user.followings, res]
                     setUser({ ...user, followings: newFollowings })
                 })
         }
@@ -57,7 +60,7 @@ function ProfileInfo({ username }) {
                     </button>
             }
             <h4 className={styles.title}>User information</h4>
-            <Info username={username}/>
+            <Info username={username} />
             <h4 className={styles.title}>User friends</h4>
             <UserFriendsList friends={followings}></UserFriendsList>
         </div>

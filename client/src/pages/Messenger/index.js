@@ -6,7 +6,7 @@ import OnlineUser from "../../components/OnlineUser";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Conversation from "../../components/Conversation";
 import socket from "../../socket/socket";
-import axiosInstance from "../../api/axios";
+import api from "../../api";
 
 function Messenger() {
     const { user } = useAuthContext()
@@ -19,13 +19,7 @@ function Messenger() {
         }
         let conv = conversations.find(conv => conv.members.includes(userResult._id))
         if (!conv) {
-            conv = (await axiosInstance.post(
-                `${process.env.REACT_APP_BACK_END}conversation`,
-                {
-                    senderId: user._id,
-                    receiverId: userResult._id
-                }
-            )).data
+            conv = await api.message.createConversation(user._id, userResult._id)
             setConversations([...conversations, conv])
         }
         setOpenedConv(conv)
@@ -33,8 +27,8 @@ function Messenger() {
 
     //
     useEffect(() => {
-        user && axiosInstance.get(`${process.env.REACT_APP_BACK_END}conversation/${user._id}`)
-            .then(result => setConversations(result.data))
+        user && api.message.getAllConvs(user._id)
+            .then(result => setConversations(result))
         socket.emit("get online users")
         socket.on("get online users", (onlineUsers) => {
             console.log("online user list", onlineUsers)
@@ -49,13 +43,13 @@ function Messenger() {
         console.log("emit: open conversation")
         setOpenedConv(conv)
     })
-    useEffect(()=>{
+    useEffect(() => {
         openedConv && socket.emit("open conversation", openedConv._id)
         return () => {
             openedConv && socket.emit("close conversation", openedConv._id)
         }
-    },[openedConv])
-    
+    }, [openedConv])
+
     return (
         <>
             <TopBar />
@@ -70,24 +64,25 @@ function Messenger() {
                             conversations.map((conv, index) => {
                                 const userId = conv.members.find(userId => userId !== user._id)
                                 return (
-                                <div key={index}
-                                    className={styles.chatMenuUser}
-                                    onClick={() => { handleChooseConv.current(conv) }}>
-                                    <OnlineUser isOnline={onlineUsers.includes(userId)} userId={userId} />
-                                </div>)}
+                                    <div key={index}
+                                        className={styles.chatMenuUser}
+                                        onClick={() => { handleChooseConv.current(conv) }}>
+                                        <OnlineUser isOnline={onlineUsers.includes(userId)} userId={userId} />
+                                    </div>)
+                            }
                             )
                         }
                     </div>
                 </div>
                 <div className={styles.chatBox}>
                     <div className={styles.chatBoxWrapper}>
-                        {openedConv 
-                        ? <Conversation convId={openedConv._id}/>
-                        : (
-                            <span className={styles.noConversationText}>
-                                Open a conversation to start a chat.
-                            </span>
-                        )}
+                        {openedConv
+                            ? <Conversation convId={openedConv._id} />
+                            : (
+                                <span className={styles.noConversationText}>
+                                    Open a conversation to start a chat.
+                                </span>
+                            )}
                     </div>
                 </div>
             </div>

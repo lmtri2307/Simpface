@@ -3,18 +3,12 @@ var router = express.Router();
 const conversationController = require('../controllers/conversationController')
 
 //new conv
-router.post("/",  (req, res, next ) => {
- conversationController.newConv(req, res)
-});
+router.post("/",  conversationController.newConv);
 
 //get all conv of a user
-router.get("/:userId",  (req, res, next) => {
-  conversationController.getConvsOfUser(req, res)
-});
+router.get("/:userId",  conversationController.getConvsOfUser);
 
 // get conv includes two userId
-router.get("/find/:firstUserId/:secondUserId", (req, res, next) => {
-  conversationController.getConv(req, res)
-});
+router.get("/find/:firstUserId/:secondUserId", conversationController.getConv);
 
 module.exports = router;

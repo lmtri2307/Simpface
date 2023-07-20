@@ -3,8 +3,7 @@ import styles from "./styles.module.scss"
 import Message from "./Message";
 import socket from "../../socket/socket";
 import ChatBox from "./ChatBox";
-import axiosInstance from "../../api/axios";
-
+import api from "../../api"
 function Conversation({ convId }) {
     const scrollRef = useRef();
     const [messages, setMessages] = useState(null)
@@ -12,14 +11,14 @@ function Conversation({ convId }) {
     // get messages and its sender full info
     useEffect(() => {
         setMessages(null)
-        axiosInstance.get(`message/${convId}`)
+        api.message.getMessagesOfConv(convId)
             .then(res => {
-                Promise.all(res.data.map((mess, index) =>
-                    axiosInstance.get(`users/${mess.sender}`)
+                Promise.all(res.map((mess, index) =>
+                    api.user.getUser(mess.sender)
                 )).then(promises => setMessages(promises.map((promise, index) => {
                     return {
-                        message: res.data[index],
-                        sender: promise.data
+                        message: res[index],
+                        sender: promise
                     }
                 })))
 

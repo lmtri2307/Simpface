@@ -7,7 +7,7 @@ import Cover from "../../components/Cover";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../context/authContext";
-import axiosInstance from "../../api/axios";
+import api from "../../api";
 
 function Profile() {
     const { user } = useAuthContext()
@@ -15,16 +15,13 @@ function Profile() {
     // alert(userName)
     const [currentUser, setCurrentUser] = useState(null)
     useEffect(() => {
-        axiosInstance.get(`${process.env.REACT_APP_BACK_END}users/${userName}`)
+        api.user.getUser(userName)
             .then(res => {
-                console.log("current user:",res.data)
-                setCurrentUser(res.data)
+                console.log("current user:", res)
+                setCurrentUser(res)
             })
     }, [userName, user])
-
-
-    if(!currentUser)
-        return <></>
+    
     return (
         <div >
             <TopBar></TopBar>
@@ -34,20 +31,24 @@ function Profile() {
                 </div>
                 <div className={styles.content}>
                     <div className={styles.profileCover}>
-                        <Cover
-                            profile={currentUser.profilePicture}
-                            cover={currentUser.coverPicture}
-                            editable={user && currentUser.username === user.username}
-                        />
+                        {
+                            currentUser &&
+                            <Cover
+                                profile={currentUser.profilePicture}
+                                cover={currentUser.coverPicture}
+                                editable={user && currentUser.username === user.username}
+                            />
+                        }
+
                     </div>
 
                     <div className={styles.profileInfo}>
                         <div className={styles.feed}>
-                            <Feed username={currentUser.username}></Feed>
+                            {currentUser && <Feed username={currentUser.username}></Feed>}
                         </div>
 
                         <div className={styles.rightBar}>
-                            <ProfileInfo username={currentUser.username}></ProfileInfo>
+                            {currentUser && <ProfileInfo username={currentUser.username}></ProfileInfo>}
                         </div>
                     </div>
                 </div>

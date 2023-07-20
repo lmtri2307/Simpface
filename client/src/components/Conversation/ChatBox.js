@@ -1,21 +1,14 @@
 import styles from "./styles.module.scss"
 import { useRef } from "react"
 import { useAuthContext } from "../../context/authContext"
-import axiosInstance from "../../api/axios"
+import api from "../../api"
 function ChatBox({convId}) {
     const {user} =useAuthContext()
     const messInput = useRef()
     const handleSendMess = async () => {
         const message = messInput.current.value
         messInput.current.value = ""
-        await axiosInstance.post(
-            `message`,
-            {
-                userId: user._id,
-                message: message,
-                conversationId: convId
-            }
-        )
+        await api.message.postMessage(user._id, message, convId)
     }
     return (
         <div className={styles.chatBoxBottom}>

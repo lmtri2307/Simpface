@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import styles from "./styles.module.scss"
-import axiosInstance from "../../api/axios";
+import api from "../../api"
 
 function OnlineUser({isOnline, userId }) {
     const [user, setUser] = useState({})
     useEffect(() => {
-        axiosInstance.get(`users/${userId}`)
-            .then(res => setUser(res.data))
+        api.user.getUser(userId)
+            .then(res => setUser(res))
     }, [userId])
     return (
         <li className={styles.wrapper}>
