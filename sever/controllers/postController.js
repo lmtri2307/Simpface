@@ -4,7 +4,7 @@ const User = require('../models/User')
 
 exports.upload = async (req, res) => {
     try {
-        res.status(200).json({ "filePath": "assets/post/" + req.file.filename })
+        res.status(200).json({ "filePath": req.file.filename })
     } catch (error) {
         console.log(error)
         res.status(500).json(error)

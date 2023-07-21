@@ -1,19 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const postController = require('../controllers/postController')
-var multer = require('multer');
+const { uploadPostImage } = require('../storage');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/assets/post');
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname);
-    }
-});
-var upload = multer({ storage });
 
-router.post('/upload', upload.single("avatar"), postController.upload)
+
+router.post('/upload', uploadPostImage, postController.upload)
 
 router.post('/create', postController.createPost)
 

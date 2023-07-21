@@ -21,7 +21,7 @@ class PostApi {
         {
             const data = new FormData()
             data.append("avatar", imageFile)
-            imgPath = (await axiosInstance.post(`${url}/upload`, data)).data.filePath
+            imgPath = (await axiosInstance.post(`${url}/upload`, data)).filePath
         }
         return axiosInstance.post(`${url}/create`, {
             desc: status,

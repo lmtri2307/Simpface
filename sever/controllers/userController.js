@@ -1,25 +1,28 @@
 const User = require('../models/User')
 const UserInfo = require('../models/UserInfo')
 const tokenHandler = require('../utils/tokenHandler')
-const {CastError} = require('mongoose')
+const { Types } = require('mongoose')
 
 exports.findUser = async (req, res) => {
     try {
+        const { usernameOrId } = req.params
+        console.log("find username: ", usernameOrId)
+
         let user
-        try {
+        if (Types.ObjectId.isValid(usernameOrId)) {
             user = await User.findOne({
-                _id: req.params.usernameOrId
+                _id: usernameOrId
             }).exec()
-        } catch (error) {
-            if (error instanceof CastError) {
-                user = await User.findOne({ username: req.params.usernameOrId }).exec()
-            } else {
-                throw error
-            }
         }
+
+        if (!user) {
+            user = await User.findOne({ username: usernameOrId }).exec()
+        }
+
         if (!user) {
             throw new Error("Can't find user")
         }
+
         res.status(200).json(user.toObject())
     } catch (error) {
         res.status(500).json(error)
@@ -158,11 +161,11 @@ exports.updateCover = async (req, res) => {
             { _id: req.params.userId },
             {
                 $set: {
-                    coverPicture: `assets/person/${req.file.filename}`
+                    coverPicture: req.file.filename
                 }
             }
         ).exec()
-            .then(() => res.status(200).send(`assets/person/${req.file.filename}`))
+            .then(() => res.status(200).send(req.file.filename))
     } catch (error) {
         console.log(error)
         res.status(500).json(error)
@@ -175,11 +178,11 @@ exports.updateAvatar = async (req, res) => {
             { _id: req.params.userId },
             {
                 $set: {
-                    profilePicture: `assets/person/${req.file.filename}`
+                    profilePicture: req.file.filename
                 }
             }
         ).exec()
-            .then(() => res.status(200).send(`assets/person/${req.file.filename}`))
+            .then(() => res.status(200).send(req.file.filename))
     } catch (error) {
         console.log(error)
         res.status(500).json(error)

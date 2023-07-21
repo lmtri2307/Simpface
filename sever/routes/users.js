@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const userController = require('../controllers/userController');
-const User = require('../models/User');
+const { uploadUserImage } = require('../storage');
 
 
 router.get('/:usernameOrId', userController.findUser)
@@ -24,19 +24,9 @@ router.get('/:name/find', userController.findUsers)
 
 
 
-var multer = require('multer');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/assets/person');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  }
-});
-var upload = multer({ storage });
-router.put('/:userId/changeCover', upload.single("picture"), userController.updateCover)
+router.put('/:userId/changeCover', uploadUserImage, userController.updateCover)
 
-router.put('/:userId/changeAvatar', upload.single("picture"), userController.updateAvatar)
+router.put('/:userId/changeAvatar', uploadUserImage, userController.updateAvatar)
 
 module.exports = router;
