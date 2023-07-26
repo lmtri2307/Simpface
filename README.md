@@ -32,6 +32,10 @@ To run SimpFace locally, follow these steps:
 6. Install the required dependencies: `yarn install`
 7. Start the front-end development server: `yarn start`
 
+## Demo Video
+
+Check out the demo video of the ToDoListApp [here](https://youtu.be/yJcFSnGCTuw).
+
 ## Usage
 
 Once the back-end and front-end servers are running, users can access the SimpFace platform by opening a web browser and visiting `http://localhost:3000`. From there, they can register an account, log in, and start using SimpFace's features, including creating posts, following other users, commenting on posts, and engaging in real-time chatting.
