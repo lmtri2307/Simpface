@@ -2,6 +2,10 @@
 
 SimpFace is a simplified version of Facebook, offering basic social media functionalities. Users can create accounts, post status updates and pictures, follow other users to see their posts, comment on posts, and engage in real-time chatting.
 
+## Demo Video
+
+Check out the demo video of the ToDoListApp [here](https://youtu.be/yJcFSnGCTuw).
+
 ## Features
 
 - User Registration: Users can create accounts to access the SimpFace platform.
@@ -31,10 +35,6 @@ To run SimpFace locally, follow these steps:
 5. Open a new terminal window and navigate to the front-end directory: `cd client`
 6. Install the required dependencies: `yarn install`
 7. Start the front-end development server: `yarn start`
-
-## Demo Video
-
-Check out the demo video of the ToDoListApp [here](https://youtu.be/yJcFSnGCTuw).
 
 ## Usage
 
