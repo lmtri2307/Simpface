@@ -4,7 +4,7 @@ SimpFace is a simplified version of Facebook, offering basic social media functi
 
 ## Demo Video
 
-Check out the demo video of the ToDoListApp [here](https://youtu.be/yJcFSnGCTuw).
+Check out the demo video of the SimpFace [here](https://youtu.be/yJcFSnGCTuw).
 
 ## Features
 
