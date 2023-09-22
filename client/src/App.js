@@ -9,9 +9,14 @@ import socket from "./socket/socket";
 function App() {
   const { user } = useAuthContext()
   useEffect(() => {
-    return () => {
+    function handleWindowClose(){
       console.log("socket disconnect")
       socket.disconnect()
+    }
+
+    window.addEventListener('beforeunload', handleWindowClose);
+    return () => {
+      window.removeEventListener('beforeunload', handleWindowClose);
     }
   }, [])
   return (

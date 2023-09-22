@@ -61,7 +61,7 @@ export default function Sidebar() {
             <ul className={styles.sidebarFriendList}>
                 {/* Close Friend List */}
                 {Users.map((u) => (
-                    <CloseFriend key={u.id} user={u} />
+                    <CloseFriend key={u.id} {...u} />
                 ))}
             </ul>
         </div>

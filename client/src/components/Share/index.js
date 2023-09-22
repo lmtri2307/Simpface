@@ -1,32 +1,10 @@
-import { memo, useRef, useState } from "react";
-import { useAuthContext } from "../../context/authContext";
 import styles from "./styles.module.scss";
 import { PermMedia, Label, Room, EmojiEmotions, Cancel, } from "@mui/icons-material"
-import api from "../../api";
+import useShare from "../../hooks/useShare";
 
-function Share({ addPost }) {
-    const { user } = useAuthContext()
+function Share({ user, onPost }) {
+    const {statusRef, file, setFile, sharePost} = useShare()
 
-    const statusInput = useRef()
-    const [file, setFile] = useState()
-
-    const handlePost = async (e) => {
-        try {
-            e.preventDefault()
-            if (!file && !statusInput.current.value) {
-                alert("Nothing to post")
-                return
-            }
-            await api.post.createPost(file, statusInput.current.value)
-                .then((res) => {
-                    statusInput.current.value = ""
-                    setFile(null)
-                    addPost(res)
-                })
-        } catch (error) {
-            alert("Upload fail")
-        }
-    }
     return (
         <div className={styles.wrapper}>
             <div className={styles.status}>
@@ -34,7 +12,7 @@ function Share({ addPost }) {
                     src={process.env.REACT_APP_BACK_END + user.profilePicture}
                     alt="" />
                 <input
-                    ref={statusInput}
+                    ref={statusRef}
                     placeholder={`What's in your mind ${user.username} ?`}
                     className={styles.statusText}
                 />
@@ -57,7 +35,9 @@ function Share({ addPost }) {
                         type="file"
                         id="file"
                         accept=".png,.jpeg,.jpg"
-                        onChange={(e) => setFile(e.target.files[0])}
+                        onChange={(e) => {
+                            setFile(e.target.files[0])
+                        }}
                     />
                     <div className={styles.option}>
                         <Label htmlColor="blue" className={styles.icon} />
@@ -72,9 +52,12 @@ function Share({ addPost }) {
                         <span>Feelings</span>
                     </div>
                 </div>
-                <button onClick={handlePost} className={styles.shareButton}>Share</button>
+                <button onClick={async () => {
+                    const newPost = await sharePost();
+                    if(newPost) onPost(newPost);
+                }} className={styles.shareButton}>Share</button>
             </div>
         </div>
     );
 }
-export default memo(Share)
+export default Share

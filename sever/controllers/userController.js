@@ -32,7 +32,7 @@ exports.findUser = async (req, res) => {
 
 exports.findFriend = async (req, res) => {
     try {
-        const friend = await User.findOne({ _id: req.params.userId }, "profilePicture username").exec()
+        const friend = await User.findById(req.params.userId, "profilePicture username").exec()
         res.status(200).json(friend.toObject())
     } catch (error) {
         console.log(error)

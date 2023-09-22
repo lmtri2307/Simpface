@@ -1,56 +1,60 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styles from "./styles.module.scss"
 import { useRef } from "react";
-import api from "../../api";
+import useRegisterForm from "../../hooks/useRegisterForm";
 function RegisterForm() {
-    const usernameInput = useRef()
-    const emailInput = useRef()
-    const passwordInput = useRef()
-    const passwordAgainInput = useRef()
-    const navigate = useNavigate()
-    const handleSubmit = async (e) => {
-        // Check retype password
-        e.preventDefault()
-        if (passwordInput.current.value !== passwordAgainInput.current.value) {
-            passwordAgainInput.current.setCustomValidity("Password don't match!")
-        } else {
-            api.auth.register(
-                usernameInput.current.value,
-                emailInput.current.value,
-                passwordInput.current.value
-            )
-                .then((res) => {
-                    alert(res)
-                    navigate("/auth")
-                })
-                .catch(err => {
-                    console.log("register err:", err)
-                    alert(err.response.data.message)
-                })
-        }
+    const { onChangeValue, submit } = useRegisterForm()
 
+
+    const passwordAgainInput = useRef()
+    const formRef = useRef()
+
+
+    const clearCustomValidity = () => {
+        passwordAgainInput.current.setCustomValidity('')
     }
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            await submit()
+        } catch (error) {
+            if (error.message === "passwordagain") {
+                passwordAgainInput.current.setCustomValidity("Password don't match!")
+                console.log("CustomValidity is set")
+                formRef.current.reportValidity()
+            }
+        }
+    }
+
+
     return (
-        <form className={styles.registerBox} onSubmit={handleSubmit}>
+        <form className={styles.registerBox} onSubmit={handleSubmit} ref={formRef}>
             <input
-                ref={usernameInput}
+                name="username"
+                onChange={onChangeValue}
                 placeholder="Username"
                 required
             />
             <input
                 type="email"
-                ref={emailInput}
+                name="email"
+                onChange={onChangeValue}
                 required
                 placeholder="Email" />
             <input
                 type="password"
-                ref={passwordInput}
+                name="password"
+                onChange={onChangeValue}
+                onInput={clearCustomValidity}
                 required
                 placeholder="Password" />
             <input
                 type="password"
-                required
+                name="passwordAgain"
                 ref={passwordAgainInput}
+                onChange={onChangeValue}
+                onInput={clearCustomValidity}
+                required
                 placeholder="Confirm Password" />
             <button type="submit" className={styles.signupButton}>Sign Up</button>
             <Link to="../" className={styles.loginButton}>

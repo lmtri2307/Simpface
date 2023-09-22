@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
 import styles from "./styles.module.scss"
-import api from "../../api"
+import useUser from "../../hooks/useUser";
 
 function OnlineUser({isOnline, userId }) {
-    const [user, setUser] = useState({})
-    useEffect(() => {
-        api.user.getUser(userId)
-            .then(res => setUser(res))
-    }, [userId])
+    const user = useUser(userId)
     return (
         <li className={styles.wrapper}>
             <div className={styles.onlineImg}>

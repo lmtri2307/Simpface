@@ -1,17 +1,20 @@
 import { memo, useEffect, useRef, useState } from "react";
 import SearchResult from "./SearchResult";
 import styles from "./styles.module.scss"
-
 import SearchIcon from '@mui/icons-material/Search';
-import api from "../../api";
-function SearchBar({ onResultClick }) {
-    const [results, setResults] = useState([])
-    const [isShowned, setIsShowned] = useState(false)
+import useSearch from "../../hooks/useSearch";
+
+function SearchBar({ useSearchData, ResultComponent, onResultClick }) {
+    const {results, search: onSearch} = useSearch(useSearchData)
+
+    const [showResults, setShowResults] = useState(false)
+    
+    // Hide results when click outside
     const parentRef = useRef(null);
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (parentRef.current && !parentRef.current.contains(event.target)) {
-                setIsShowned(false)
+                setShowResults(false)
             }
         };
 
@@ -20,13 +23,14 @@ function SearchBar({ onResultClick }) {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-    const handleSearch = async (e) => {
-        if (e.target.value) {
-            const users = await api.user.searchUsers(e.target.value)
-            setResults(users)
-            setIsShowned(true)
+
+    // Search input change
+    const handleSearch = (e) => {
+        if (e.target.value) {   // hide the results when searchInput is blank
+            onSearch(e.target.value)
+            setShowResults(true)
         } else {
-            setIsShowned(false)
+            setShowResults(false)
         }
     }
 
@@ -34,10 +38,15 @@ function SearchBar({ onResultClick }) {
         <div className={styles.wrapper}
             ref={parentRef}
         >
-            <SearchResult results={results}
-                isShowned={isShowned}
-                setIsShowned={setIsShowned}
-                onResultClick={onResultClick}
+            <SearchResult
+                results={results}
+                isShowned={showResults}
+                setIsShowned={setShowResults}
+                ResultComponent = {ResultComponent}
+                onResultClick={(result) => {
+                    onResultClick(result)
+                    setShowResults(false)
+                }}
             >
                 <div className={styles.searchbar}>
                     <SearchIcon className={styles.searchIcon} />
@@ -45,14 +54,13 @@ function SearchBar({ onResultClick }) {
                         placeholder="Search for friend, post or video"
                         className={styles.searchInput}
                         onChange={handleSearch}
-                        onFocus={(e) => { e.target.value && setIsShowned(true) }}
+                        onFocus={(e) => { e.target.value && setShowResults(true) }}
                     />
 
                 </div>
             </SearchResult>
         </div>
-
-    );
+    )
 }
 
 export default memo(SearchBar);

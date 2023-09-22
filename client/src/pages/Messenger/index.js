@@ -3,10 +3,14 @@ import SearchBar from "../../components/SearchBar";
 import TopBar from "../../components/TopBar";
 import { useAuthContext } from "../../context/authContext";
 import OnlineUser from "../../components/OnlineUser";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import Conversation from "../../components/Conversation";
 import socket from "../../socket/socket";
 import api from "../../api";
+import useSearchUserResults from "../../hooks/useSearchUserResults";
+import UserSearchResult from "../../components/SearchBar/UserSearchResult";
+
+const MemoConversation = memo(Conversation)
 
 function Messenger() {
     const { user } = useAuthContext()
@@ -20,7 +24,7 @@ function Messenger() {
         let conv = conversations.find(conv => conv.members.includes(userResult._id))
         if (!conv) {
             conv = await api.message.createConversation(user._id, userResult._id)
-            setConversations([...conversations, conv])
+            setConversations(prev => [...prev, conv])
         }
         setOpenedConv(conv)
     }, [user, conversations])
@@ -44,6 +48,7 @@ function Messenger() {
         setOpenedConv(conv)
     })
     useEffect(() => {
+        console.log("openedConv useEffect run")
         openedConv && socket.emit("open conversation", openedConv._id)
         return () => {
             openedConv && socket.emit("close conversation", openedConv._id)
@@ -58,7 +63,11 @@ function Messenger() {
                     <div className={styles.chatMenuWrapper}>
                         {/* <input placeholder="Search for friends" className={styles.chatMenuInput} /> */}
                         <div className={styles.chatMenuInput}>
-                            <SearchBar onResultClick={onSearchResultClick} />
+                            <SearchBar
+                                onResultClick={onSearchResultClick}
+                                useSearchData={useSearchUserResults}
+                                ResultComponent={UserSearchResult}
+                            />
                         </div>
                         {
                             conversations.map((conv, index) => {
@@ -77,7 +86,7 @@ function Messenger() {
                 <div className={styles.chatBox}>
                     <div className={styles.chatBoxWrapper}>
                         {openedConv
-                            ? <Conversation convId={openedConv._id} />
+                            ? <MemoConversation convId={openedConv._id} />
                             : (
                                 <span className={styles.noConversationText}>
                                     Open a conversation to start a chat.

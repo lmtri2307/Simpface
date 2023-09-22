@@ -1,16 +1,7 @@
-import { useCallback } from "react";
-import Result from "./Result";
 import styles from "./styles.module.scss"
 import Tippy from "@tippyjs/react/headless";
 
-function SearchResult({ children, results, isShowned, setIsShowned, onResultClick }) {
-    console.log("SearchResult re-render")
-
-    const handleResultClick = useCallback((user) => {
-        onResultClick(user)
-
-        setIsShowned(false)
-    }, [onResultClick, setIsShowned])
+function SearchResult({ children, results, isShowned, onResultClick, ResultComponent }) {
 
     return (
         <Tippy
@@ -19,16 +10,18 @@ function SearchResult({ children, results, isShowned, setIsShowned, onResultClic
 
             interactive
             render={attrs => (
-                <div className={styles.dropDownWrapper} tabIndex="-1" {...attrs}>
-                    {results.map((item, index) =>
-                        <Result
-                            key={index}
-                            imgSrc={item.profilePicture}
-                            accountName={item.username}
-                            onClick={() => { handleResultClick(item) }}
-                        >
-                        </Result>
-                    )}
+                <div>
+                    <div className={styles.dropDownWrapper} tabIndex="-1" {...attrs}>
+                        {results.map((result, index) =>
+                            <ResultComponent
+                                key={index}
+
+                                {...result}
+                                onClick={() => { onResultClick(result) }}
+                            >
+                            </ResultComponent>
+                        )}
+                    </div>
                 </div>
             )}
         >

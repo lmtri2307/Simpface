@@ -1,29 +1,9 @@
-import { memo} from "react";
 import styles from "./styles.module.scss"
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import { useAuthContext } from "../../context/authContext";
-import api from "../../api"
+import useCover from "../../hooks/useCover";
 
 function Cover({ profile, cover, editable }) {
-    const { user, updateProfile, updateCover } = useAuthContext()
-    // const coverRef = useRef()
-    // const avatarRef = useRef()
-    const handlePictureChange = async (e) => {
-        const nameOfImg = e.target.getAttribute('name')
-        const pictureFile = e.target.files[0]
-
-        api.user.changePicture(user._id, nameOfImg, pictureFile)
-            .then(res => {
-                // const newSrc = `${process.env.REACT_APP_BACK_END}${res.data}`
-                if (nameOfImg === "Cover") {
-                    // coverRef.current.src = newSrc
-                    updateCover(res)
-                } else {
-                    // avatarRef.current.src = newSrc
-                    updateProfile(res)
-                }
-            })
-    }
+    const { handlePictureChange } = useCover()
     return (
         <div className={styles.wrapper}>
             <div className={styles.coverUserImgWrapper}>
@@ -77,4 +57,4 @@ function Cover({ profile, cover, editable }) {
     );
 }
 
-export default memo(Cover);
+export default Cover;

@@ -1,24 +1,17 @@
 import { Link } from "react-router-dom";
-import { useAuthContext } from "../../context/authContext";
-
 import styles from "./styles.module.scss"
-import { useRef } from "react";
+import useLoginForm from "../../hooks/useLoginForm";
 function LoginForm() {
-    const emailInput = useRef()
-    const passwordInput = useRef()
-    const { login } = useAuthContext();
-    const handleSumit = async (e) => {
-        e.preventDefault()
-        try {
-            await login(emailInput.current.value, passwordInput.current.value)
-        } catch (error) {
-            alert(error.response.data)
-        }
-    }
+    const {onChangeValue, submit} = useLoginForm()
+
     return (
-        <form onSubmit={handleSumit} className={styles.loginBox}>
-            <input ref={emailInput} type="email" placeholder="Email" />
-            <input ref={passwordInput} type="password" placeholder="Password" />
+        <form onSubmit={(e) => {e.preventDefault(); submit();}} className={styles.loginBox}>
+            <input name="email" type="email" placeholder="Email" 
+                onChange={onChangeValue}
+            />
+            <input name="password" type="password" placeholder="Password" 
+                onChange={onChangeValue}
+            />
             <button type="submit" className={styles.loginButton}>Log In</button>
             <span className={styles.loginForgot}>Forgot Password?</span>
             <Link to="register" className={styles.registerButton}>

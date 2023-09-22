@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import styles from "./styles.module.scss"
 
-function CommentModal({ children, hideModal }) {
+function CommentModal({ children, onClick }) {
     useEffect(() => {
         document.body.style.overflowY = "hidden"
         return () => {
@@ -9,7 +9,7 @@ function CommentModal({ children, hideModal }) {
         }
     }, [])
     return (
-        <div className={styles.modal} onClick={hideModal}>
+        <div className={styles.modal} onClick={onClick}>
             {children}
         </div>
     )

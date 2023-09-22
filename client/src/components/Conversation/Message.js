@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { useAuthContext } from '../../context/authContext';
 import styles from './styles.module.scss';
 import { format } from "timeago.js";
@@ -27,4 +26,4 @@ function Message({ message, sender }) {
   );
 }
 
-export default memo(Message)
+export default Message

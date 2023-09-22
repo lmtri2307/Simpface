@@ -1,14 +1,19 @@
 import styles from "./styles.module.scss"
 import { Link } from "react-router-dom"
 import { useAuthContext } from "../../context/authContext"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import SendIcon from '@mui/icons-material/Send';
 import clsx from "clsx";
 
-function MyComment({ handleComment }) {
+function SelfComment({ handleComment }) {
     const { user } = useAuthContext()
     const myComment = useRef()
-    // const [myComment, setMyComment] = useState("")
+
+    useEffect(() => {
+        myComment.current.focus()
+    },[])
+    
+
     return (
         <div style={{ borderTop: "1px solid black", boxShadow: "0px 0px 16px -8px rgba(0, 0, 0, 0.68)" }}>
             <div className={styles.myComment}>
@@ -20,9 +25,8 @@ function MyComment({ handleComment }) {
                     />
                 </Link>
                 <input
-                    // value={myComment}
                     ref={myComment}
-                    // onChange={e => setMyComment(e.target.value)} 
+                    placeholder="Viết bình luận ..." 
                     type="text"
                 />
                 <button
@@ -33,7 +37,7 @@ function MyComment({ handleComment }) {
                     onClick={e => {
                         handleComment(myComment.current.value).then(() => {
                             // setMyComment("")
-                            myComment.current.value= ""
+                            myComment.current.value = ""
                         })
                     }}>
                     <SendIcon />
@@ -43,4 +47,4 @@ function MyComment({ handleComment }) {
     )
 }
 
-export default MyComment
+export default SelfComment

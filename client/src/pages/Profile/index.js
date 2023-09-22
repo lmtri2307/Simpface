@@ -14,13 +14,18 @@ function Profile() {
     const { userName } = useParams()
     // alert(userName)
     const [currentUser, setCurrentUser] = useState(null)
+    const isSelf = user && userName === user.username
     useEffect(() => {
+        if(isSelf)  {
+            setCurrentUser(user)
+            return
+        }
         api.user.getUser(userName)
-            .then(res => {
-                console.log("current user:", res)
-                setCurrentUser(res)
+            .then(user => {
+                console.log("current user:", user)
+                setCurrentUser(user)
             })
-    }, [userName, user])
+    }, [userName, isSelf, user])
     
     return (
         <div >

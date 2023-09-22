@@ -27,12 +27,17 @@
           display: none;
         }
 
+        & div[id*="tippy"]{
+          & > div{
+            border: 1px solid black;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 4px;
+          }
+        }
         & div[class*="dropDownWrapper"]{
           color: white;
-          // background-color: var( --primary-color);
-          // background-color: rgb(228,230,235);
-          border: 1px solid black;
-          margin-top: 4px;
+          overflow-y: auto;
         }
       }
       .chatMenuUser {

@@ -14,12 +14,6 @@ export const AuthProvider = ({ children }) => {
       }).finally(() => setfetchedUser(true))
   }, [])
 
-
-  const login = async (email, password) => {
-    const response = await api.auth.login(email, password)
-    setUser(response)
-  };
-
   const logout = () => {
     api.auth.logout().catch(err => console.log(err))
     setUser(null);
@@ -38,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   if (!fetchedUser)
     return <></>
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, updateProfile, updateCover }}>
+    <AuthContext.Provider value={{ user, setUser, logout, updateProfile, updateCover }}>
       {children}
     </AuthContext.Provider>
   );

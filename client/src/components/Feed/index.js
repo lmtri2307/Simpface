@@ -1,35 +1,24 @@
 import Post from "../Post";
 import Share from "../Share";
-import { useCallback, useEffect, useState } from "react";
+import { memo } from "react";
 import { useAuthContext } from "../../context/authContext";
-import api from "../../api"
+import useFeed from "../../hooks/useFeed";
 
+const MemoShare = memo(Share)
+
+// "username" is null if is timeline
 function Feed({ username }) {
+    const {posts, addPost} = useFeed(username)
+    
     const { user } = useAuthContext()
-    const [posts, setPosts] = useState([])
-    useEffect(() => {
-        (async () => {
-            const newPosts = username
-                ? await api.post.getPostOfUser(username)
-                : await api.post.getTimelinePost()
-
-            console.log("newPosts:", newPosts)
-            if (newPosts) {
-                setPosts(newPosts)
-            }
-        })()
-    }, [username, user])
-
-    const handleShare = useCallback((newPost) => {
-        setPosts([newPost, ...posts])
-    }, [posts])
     const isCurrnetUser = !username || (user && user.username === username)
-    return (<div>
-        {isCurrnetUser && <Share addPost={handleShare} />}
-        {posts.map((item) =>
-            <Post key={item._id} post={item}></Post>
-        )}
-    </div>);
-}
 
+    return (<div>
+        {isCurrnetUser &&
+            <MemoShare user={user} onPost={addPost} />}
+        {posts.map((post) =>
+            <Post key={post._id} post={post}></Post>
+        )}
+    </div>)
+}
 export default Feed;

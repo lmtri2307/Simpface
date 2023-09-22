@@ -1,28 +1,21 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useState } from "react";
 import styles from "./styles.module.scss"
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckIcon from '@mui/icons-material/Check';
-import { useAuthContext } from "../../context/authContext";
 import clsx from "clsx";
-import api from "../../api";
+import useInfoLogic from "../../hooks/useInfoLogic";
 
 function Info({ username }) {
-    const { user } = useAuthContext()
-    const [userInfo, setUserInfo] = useState({})
+    console.log("Info get username: ", username)
+    const { isCurrentUser, userInfo, onSubmit } = useInfoLogic(username)
+
     const [isEditting, setIsEditting] = useState(false)
-    useEffect(() => {
-        api.user.getUserInfo(username)
-            .then(res => setUserInfo(res))
-    }, [username])
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        api.user.updateInfo(username, e.target)
-            .then(res => {
-                setUserInfo(res)
-                setIsEditting(false)
-            })
+        onSubmit(e.target)
+            .then(() => setIsEditting(false))
     }
 
     return (
@@ -60,7 +53,7 @@ function Info({ username }) {
                 }
             </form>
             {
-                (user && user.username === username)
+                isCurrentUser
                 && (isEditting
                     ? <div className={styles.editingBtnWrapper}>
                         <button

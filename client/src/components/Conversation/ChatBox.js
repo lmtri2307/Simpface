@@ -1,14 +1,16 @@
 import styles from "./styles.module.scss"
 import { useRef } from "react"
-import { useAuthContext } from "../../context/authContext"
-import api from "../../api"
-function ChatBox({convId}) {
-    const {user} =useAuthContext()
+
+function ChatBox({onSendMessage}) {
     const messInput = useRef()
+    
     const handleSendMess = async () => {
         const message = messInput.current.value
-        messInput.current.value = ""
-        await api.message.postMessage(user._id, message, convId)
+
+        if(message){
+            messInput.current.value = ""
+            onSendMessage(message)
+        }
     }
     return (
         <div className={styles.chatBoxBottom}>
